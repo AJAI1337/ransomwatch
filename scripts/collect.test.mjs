@@ -9,3 +9,6 @@ test('normalizes both public feed schemas and rejects invalid dates',()=>{
 test('keeps different groups distinct and never forwards arbitrary URLs',()=>{
  const rows=normalize([{victim:'Example',group:'one',discovered:'2026-10-25',url:'javascript:alert(1)'},{victim:'Example',group:'two',discovered:'2026-10-25',url:'https://evil.example'}],'test');assert.equal(dedup(rows).length,2);assert.deepEqual(rows[0].reports,{});assert.deepEqual(rows[1].reports,{});
 });
+test('uses a consistent group label across records from different feeds',()=>{
+ const rows=normalize([{victim:'One',group:'BYOD',discovered:'2026-10-25'},{victim:'Two',group:'byod',discovered:'2026-10-25'},{victim:'Three',group:'thegentlemen',discovered:'2026-10-25'},{victim:'Four',group:'the gentlemen',discovered:'2026-10-25'}],'test');const merged=dedup(rows);assert.equal(new Set(merged.map(r=>r.group)).size,2);
+});
